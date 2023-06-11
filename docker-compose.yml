@@ -1,0 +1,11 @@
+services:
+  simulator:
+    image: simulator
+    stdin_open: true
+    tty: true
+    network_mode: host
+    build:
+      context: .
+      dockerfile: Dockerfile
+    volumes:
+      - ./ADCore:/opt/epics/modules/areaDetector/ADCore

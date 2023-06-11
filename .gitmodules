@@ -1,0 +1,3 @@
+[submodule "ADCore"]
+	path = ADCore
+	url = https://github.com/henriquesimoes/ADCore
