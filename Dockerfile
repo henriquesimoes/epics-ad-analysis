@@ -11,9 +11,7 @@ RUN make -C /opt/epics/modules/areaDetector/ADSimDetector/iocs/simDetectorIOC
 
 WORKDIR /opt/epics/modules/areaDetector/ADSimDetector/iocs/simDetectorIOC/iocBoot/iocSimDetector
 
-RUN ln -s envPaths envPaths.linux && \
-    sed -e "s|commonPlugins.cmd|EXAMPLE_commonPlugins.cmd|" \
-        -i st_base.cmd
+COPY config/*cmd .
 
 CMD make -C /opt/epics/modules/areaDetector/ADCore && \
-    ./start_epics
+    ./st.cmd
