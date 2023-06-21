@@ -2,16 +2,15 @@
 
 < envPaths
 
-errlogInit(20000)
-asynSetMinTimerPeriod(0.001)
-
 dbLoadDatabase("$(TOP)/dbd/simDetectorApp.dbd")
 simDetectorApp_registerRecordDeviceDriver(pdbbase) 
 
 # Prefix for all records
 epicsEnvSet("PREFIX", "SIM:")
+
 # The port name for the detector
 epicsEnvSet("PORT", "SIM")
+
 # The queue size for all plugins
 epicsEnvSet("QSIZE", "20")
 # The maximum image width; used to set the maximum size for this driver and for row profiles in the NDPluginStats plugin
@@ -35,20 +34,8 @@ epicsEnvSet("EPICS_CA_AUTO_ARRAY_BYTES", "YES")
 simDetectorConfig("$(PORT)", $(XSIZE), $(YSIZE), 1, 0, 0)
 dbLoadRecords("$(ADSIMDETECTOR)/db/simDetector.template", "P=$(PREFIX), R=Cam:, PORT=$(PORT), ADDR=0, TIMEOUT=1")
 
-# Create a standard arrays plugin, set it to get data from simulator driver.
-NDStdArraysConfigure("Image1", 20, 0, "$(PORT)", 0, 0, 0, 0, 0, 5)
-
-# This creates a waveform large enough for 1024 x 1024 x 3 (e.g. RGB color) arrays.
-# This waveform only allows transporting 8-bit images
-dbLoadRecords("NDStdArrays.template", "P=$(PREFIX), R=Image1:, PORT=Image1, ADDR=0, TIMEOUT=1, NDARRAY_PORT=$(PORT), TYPE=Int8, FTVL=UCHAR, NELEMENTS=3145728")
-
-# Load all other plugins using plugins
+# Load plugins
 < plugins.cmd
-
-# Create a standard arrays plugin, set it to get data from FFT plugin.
-NDStdArraysConfigure("Image2", 3, 0, "FFT", 0)
-# This waveform allows transporting 64-bit images, so it can handle any detector data type at the expense of more memory and bandwidth
-dbLoadRecords("NDStdArrays.template", "P=$(PREFIX), R=Image2:, PORT=Image2, ADDR=0, TIMEOUT=1, NDARRAY_PORT=FFT, TYPE=Float64, FTVL=DOUBLE, NELEMENTS=3145728")
 
 # Enable asyn logging to stdout
 asynSetTraceMask("$(PORT)", 0, ERROR | WARNING)
@@ -59,31 +46,11 @@ dbpf $(PREFIX)Cam:AcquireTime 0.001
 dbpf $(PREFIX)Cam:AcquirePeriod 0.005
 dbpf $(PREFIX)Cam:ArrayCallbacks 1
 
-dbpf $(PREFIX)Image1:NDArrayPort $(PORT)
-dbpf $(PREFIX)Image1:EnableCallbacks 1
-
 dbpf $(PREFIX)Stats:NDArrayPort $(PORT)
 dbpf $(PREFIX)Stats:EnableCallbacks 1
 dbpf $(PREFIX)Stats:ComputeStatistics 1
 dbpf $(PREFIX)Stats:ComputeCentroid 1
 dbpf $(PREFIX)Stats:ComputeProfiles 1
 dbpf $(PREFIX)Stats:ComputeHistogram 1
-
-dbpf $(PREFIX)Trans:NDArrayPort $(PORT)
-dbpf $(PREFIX)Trans:EnableCallbacks 1
-dbpf $(PREFIX)Trans:Type Rot90Mirror
-
-dbpf $(PREFIX)ROI:NDArrayPort $(PORT)
-dbpf $(PREFIX)ROI:EnableCallbacks 1
-dbpf $(PREFIX)ROI:EnableX 1
-dbpf $(PREFIX)ROI:EnableY 1
-dbpf $(PREFIX)ROI:MinX 100
-dbpf $(PREFIX)ROI:MinY 100
-dbpf $(PREFIX)ROI:SizeX 800
-dbpf $(PREFIX)ROI:SizeY 800
-
-dbpf $(PREFIX)PROC:NDArrayPort $(PORT)
-dbpf $(PREFIX)PROC:EnableCallbacks 1
-dbpf $(PREFIX)PROC:AutoOffsetScale 1
 
 dbpf $(PREFIX)Cam:Acquire 1
