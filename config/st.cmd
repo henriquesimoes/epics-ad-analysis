@@ -54,3 +54,36 @@ dbLoadRecords("NDStdArrays.template", "P=$(PREFIX), R=Image2:, PORT=Image2, ADDR
 asynSetTraceMask("$(PORT)", 0, ERROR | WARNING)
 
 iocInit()
+
+dbpf $(PREFIX)Cam:AcquireTime 0.001
+dbpf $(PREFIX)Cam:AcquirePeriod 0.005
+dbpf $(PREFIX)Cam:ArrayCallbacks 1
+
+dbpf $(PREFIX)Image1:NDArrayPort $(PORT)
+dbpf $(PREFIX)Image1:EnableCallbacks 1
+
+dbpf $(PREFIX)Stats:NDArrayPort $(PORT)
+dbpf $(PREFIX)Stats:EnableCallbacks 1
+dbpf $(PREFIX)Stats:ComputeStatistics 1
+dbpf $(PREFIX)Stats:ComputeCentroid 1
+dbpf $(PREFIX)Stats:ComputeProfiles 1
+dbpf $(PREFIX)Stats:ComputeHistogram 1
+
+dbpf $(PREFIX)Trans:NDArrayPort $(PORT)
+dbpf $(PREFIX)Trans:EnableCallbacks 1
+dbpf $(PREFIX)Trans:Type Rot90Mirror
+
+dbpf $(PREFIX)ROI:NDArrayPort $(PORT)
+dbpf $(PREFIX)ROI:EnableCallbacks 1
+dbpf $(PREFIX)ROI:EnableX 1
+dbpf $(PREFIX)ROI:EnableY 1
+dbpf $(PREFIX)ROI:MinX 100
+dbpf $(PREFIX)ROI:MinY 100
+dbpf $(PREFIX)ROI:SizeX 800
+dbpf $(PREFIX)ROI:SizeY 800
+
+dbpf $(PREFIX)PROC:NDArrayPort $(PORT)
+dbpf $(PREFIX)PROC:EnableCallbacks 1
+dbpf $(PREFIX)PROC:AutoOffsetScale 1
+
+dbpf $(PREFIX)Cam:Acquire 1
