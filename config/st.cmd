@@ -44,6 +44,7 @@ iocInit()
 
 dbpf $(PREFIX)Cam:AcquireTime 0.001
 dbpf $(PREFIX)Cam:AcquirePeriod 0.005
+dbpf $(PREFIX)Cam:ImageMode "Continuous"
 dbpf $(PREFIX)Cam:ArrayCallbacks 1
 
 dbpf $(PREFIX)Stats:NDArrayPort $(PORT)
