@@ -14,4 +14,6 @@ WORKDIR /opt/epics/modules/areaDetector/ADSimDetector/iocs/simDetectorIOC/iocBoo
 COPY config/*cmd .
 
 CMD make -C /opt/epics/modules/areaDetector/ADCore && \
+    (camonitor SIM:Stats:ExecutionTime_RBV > /tmp/stats.time &) && \
+    sleep 5 && \
     ./st.cmd
