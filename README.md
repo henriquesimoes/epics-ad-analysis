@@ -37,3 +37,23 @@ access the container environment with
 ```bash
 sudo docker compose exec simulator bash
 ```
+
+## Profiling a code
+
+For profiling you should first start Docker service and wait until the patched
+module is compiled (for instance, by monitoring the logs).
+
+```bash
+docker compose up -d
+docker compose logs --follow simulator
+```
+
+Once the IOC started running, we can get the process ID (PID) of the IOC by running:
+
+```bash
+docker compose exec simulator bash -c \
+      "ps -u root | grep simDetector"
+```
+
+Based on the PID, we can now attach Linux Perf to this process and collect the
+statistics in the host operating system with superuser permissions.
